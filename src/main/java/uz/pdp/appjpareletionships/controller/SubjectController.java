@@ -9,23 +9,26 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequestMapping(value = "/subject")
 public class SubjectController {
 
     @Autowired
     SubjectRepository subjectRepository;
 
-    @RequestMapping(value = "/subject", method = RequestMethod.GET)
+    @GetMapping
     public List<Subject> getSubjects() {
         return subjectRepository.findAll();
     }
 
-    @RequestMapping(value = "/subject", method = RequestMethod.POST)
+    @PostMapping
     public String addSubject(@RequestBody Subject subject) {
+        if (subjectRepository.existsByName(subject.getName()))
+            return "This subject already exists";
         subjectRepository.save(subject);
         return "Subject added";
     }
 
-    @RequestMapping(value = "/subject/{id}", method = RequestMethod.DELETE)
+    @DeleteMapping("/{id}")
     public String deleteSubject(@PathVariable Integer id) {
         Optional<Subject> optionalSubject = subjectRepository.findById(id);
         if (optionalSubject.isPresent()) {
@@ -37,7 +40,7 @@ public class SubjectController {
         }
     }
 
-    @RequestMapping(value = "/subject/{id}", method = RequestMethod.PUT)
+    @PutMapping("/{id}")
     public String editeSubject(@PathVariable Integer id, @RequestBody Subject subject) {
         Optional<Subject> optionalSubject = subjectRepository.findById(id);
         if (optionalSubject.isPresent()) {

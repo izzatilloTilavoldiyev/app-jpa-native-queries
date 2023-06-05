@@ -26,6 +26,9 @@ public class Student {
     @OneToOne
     private Address address;
 
+    @ManyToOne
+    private Group group;
+
     @ManyToMany
     private List<Subject> subjects;
 }
