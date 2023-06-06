@@ -44,4 +44,30 @@ public class FacultyController {
     public List<Faculty> getFacultiesByUniversityId(@PathVariable Integer universityId) {
         return facultyRepository.findAllByUniversityId(universityId);
     }
+
+    @DeleteMapping("/{facultyId}")
+    public String deleteFaculty(@PathVariable Integer facultyId) {
+        try {
+            facultyRepository.deleteById(facultyId);
+            return "Faculty deleted";
+        } catch (Exception e) {
+            return "Error in deleting";
+        }
+    }
+
+    @PutMapping("/{id}")
+    public String editeFaculty(@PathVariable Integer id, @RequestBody FacultyDTO facultyDTO) {
+        Optional<Faculty> optionalFaculty = facultyRepository.findById(id);
+        if (optionalFaculty.isPresent()) {
+            Faculty faculty = optionalFaculty.get();
+            faculty.setName(facultyDTO.getName());
+            Optional<University> optionalUniversity = universityRepository.findById(facultyDTO.getUniversity_id());
+            if (optionalUniversity.isEmpty())
+                return "University not found";
+            faculty.setUniversity(optionalUniversity.get());
+            facultyRepository.save(faculty);
+            return "Faculty edited";
+        }
+        return "Faculty not found";
+    }
 }
