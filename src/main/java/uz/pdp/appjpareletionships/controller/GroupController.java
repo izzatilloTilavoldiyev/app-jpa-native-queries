@@ -30,6 +30,11 @@ public class GroupController {
         return groupRepository.findAllByFaculty_UniversityId(universityId);
     }
 
+    @GetMapping(value = "/byFacultyId/{facultyId}")
+    public List<Group> getGroupByFacultyId(@PathVariable Integer facultyId) {
+        return groupRepository.findAllByFacultyId(facultyId);
+    }
+
     @PostMapping
     public String addGroup(@RequestBody GroupDTO groupDTO) {
         Group group = new Group();
@@ -41,6 +46,30 @@ public class GroupController {
         group.setFaculty(optionalFaculty.get());
         groupRepository.save(group);
         return "Group added";
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteGroup(@PathVariable Integer id) {
+        Optional<Group> optionalGroup = groupRepository.findById(id);
+        if (optionalGroup.isEmpty())
+            return "Group not found";
+        groupRepository.deleteById(id);
+        return "Group deleted";
+    }
+
+    @PutMapping("/{id}")
+    public String editeGroup(@PathVariable Integer id, @RequestBody GroupDTO groupDTO) {
+        Optional<Group> optionalGroup = groupRepository.findById(id);
+        if (optionalGroup.isEmpty())
+            return "Group not found";
+        Group group = optionalGroup.get();
+        group.setName(groupDTO.getName());
+        Optional<Faculty> optionalFaculty = facultyRepository.findById(groupDTO.getFaculty_id());
+        if (optionalFaculty.isEmpty())
+            return "Faculty not found";
+        group.setFaculty(optionalFaculty.get());
+        groupRepository.save(group);
+        return "Group edited";
     }
 }
 
